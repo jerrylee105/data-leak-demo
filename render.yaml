@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: data-leak-demo
+    runtime: docker
+    plan: free
+    region: singapore
+    envVars:
+      - key: PORT
+        value: 5000
+      - key: ADMIN_PASSWORD
+        value: 20112026
+      - key: GROQ_MODEL
+        value: openai/gpt-oss-120b
+      - key: GROQ_API_KEY
+        sync: false
