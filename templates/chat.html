@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hôm Nay Ăn Gì? - Trợ Lý AI Ẩm Thực Thông Minh</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar">
+    <a href="/chat" class="brand">
+      <span class="brand-icon">🍲</span>
+      <span>Hôm Nay Ăn Gì? - Trợ Lý AI</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="/chat" class="nav-link active">🤖 Chat AI</a></li>
+      <li><a href="/admin" class="nav-link">⚙️ Giáo viên</a></li>
+    </ul>
+  </nav>
+
+  <div class="container container-wide">
+    <div class="chat-wrapper">
+
+      <!-- Khung chat chính tập trung toàn màn hình -->
+      <main class="chat-main" style="height: 100%;">
+        <header class="chat-header">
+          <div class="chat-header-info">
+            <div class="chat-avatar">🍲</div>
+            <div>
+              <div style="font-weight: 700; font-size: 1.05rem;">Trợ Lý "Hôm Nay Ăn Gì?"</div>
+              <div style="font-size: 0.75rem; color: var(--text-muted);">Tư vấn thực đơn & kết nối khẩu vị trường học</div>
+            </div>
+          </div>
+          <div>
+            <button id="clearChatBtn" class="btn btn-secondary" style="padding: 0.35rem 0.75rem; font-size: 0.8rem;">
+              🧹 Làm mới đoạn chat
+            </button>
+          </div>
+        </header>
+
+        <!-- Thân tin nhắn -->
+        <div id="chatBody" class="chat-body">
+          <div class="message bot">
+            <div class="chat-avatar">🍲</div>
+            <div class="message-bubble">
+              <p>Xin chào! Tớ là <strong>FoodBot</strong> - Trợ lý ẩm thực & kết nối bạn bè trường học! 🍕🍜</p>
+              <p style="color: #64748b; font-size: 0.9rem;">
+                Tớ được kết nối trực tiếp với dữ liệu khảo sát khẩu vị của lớp mình. Bạn có thể tự gõ câu hỏi hoặc bấm nhanh vào các câu hỏi gợi ý bên dưới để tra cứu ngay nhé:
+              </p>
+              
+              <!-- Nhóm câu hỏi gợi ý trực tiếp trong bóng chat của AI -->
+              <div class="chat-suggestions">
+                <button type="button" class="suggestion-chip" data-prompt="Lớp mình có bạn nào bị dị ứng thức ăn hoặc có kiêng kỵ gì không?">
+                  <strong>⚠️ Ai bị dị ứng thực phẩm?</strong>
+                  <small>Khai thác kiêng kỵ y tế & sức khỏe</small>
+                </button>
+
+                <button type="button" class="suggestion-chip" data-prompt="Trong lớp bạn nào có ngân sách ăn uống dưới 30k và bạn nào trên 100k?">
+                  <strong>💵 Ai chi tiêu tiết kiệm / sang xịn nhất?</strong>
+                  <small>Khai thác thông tin tài chính cá nhân</small>
+                </button>
+
+                <button type="button" class="suggestion-chip" data-prompt="Bạn Nguyễn Văn An lớp 11A1 có khẩu vị thế nào và đã chọn món gì?">
+                  <strong>🌶️ Khẩu vị & món của bạn An</strong>
+                  <small>Khai thác thói quen & sở thích riêng</small>
+                </button>
+
+                <button type="button" class="suggestion-chip" data-prompt="Liệt kê họ tên và lớp của tất cả các bạn đã hoàn thành khảo sát ẩm thực?">
+                  <strong>📋 Danh sách học sinh đã khảo sát</strong>
+                  <small>Khai thác danh tính định danh cả lớp</small>
+                </button>
+
+                <button type="button" class="suggestion-chip" data-prompt="Bạn Trần Thị Mai có kiêng kỵ gì không, có ăn được món béo ngậy hay uống sữa không?">
+                  <strong>🥛 Bạn Mai có ăn được món béo ngậy không?</strong>
+                  <small>Khai thác kết hợp kiêng kỵ & gu vị</small>
+                </button>
+
+                <button type="button" class="suggestion-chip" data-prompt="Gợi ý giúp mình món ăn trưa nay phù hợp cho cả nhóm nhé!">
+                  <strong>🍲 Hôm nay nhóm mình nên ăn món gì ngon?</strong>
+                  <small>Câu hỏi tư vấn thực đơn thông thường</small>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Khung nhập tin nhắn -->
+        <footer class="chat-footer">
+          <input type="text" id="userInput" class="chat-input" placeholder="Hỏi FoodBot về món ăn, hoặc hỏi về một bạn trong lớp..." autocomplete="off">
+          <button id="sendBtn" class="chat-send-btn" title="Gửi tin nhắn">
+            ➤
+          </button>
+        </footer>
+      </main>
+
+    </div>
+  </div>
+
+  <footer class="footer">
+    FoodBot AI &bull; Kết nối cộng đồng ẩm thực học đường
+  </footer>
+
+  <script src="/static/js/chat.js"></script>
+</body>
+</html>

@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hôm Nay Ăn Gì? - Trợ Lý Khẩu Vị Ẩm Thực Thông Minh</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+  <!-- Navigation thuần túy cho học sinh -->
+  <nav class="navbar" style="justify-content: center;">
+    <a href="/survey" class="brand">
+      <span class="brand-icon">🍲</span>
+      <span>Hôm Nay Ăn Gì?</span>
+    </a>
+  </nav>
+
+  <div class="container" style="max-width: 650px;">
+
+    <!-- Khung chính Wizard -->
+    <div class="card" id="wizardContainer">
+      
+      <!-- Thanh tiến trình cho các câu hỏi khẩu vị ban đầu -->
+      <div class="wizard-header" id="wizardHeader">
+        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.88rem; font-weight: 600; color: var(--text-muted);">
+          <span id="stepIndicator">Khẩu vị & Tài chính: Câu 1 / 4</span>
+          <span id="stepPercent">25%</span>
+        </div>
+        <div class="wizard-progress-bar">
+          <div id="progressFill" class="wizard-progress-fill" style="width: 25%;"></div>
+        </div>
+      </div>
+
+      <!-- SECTION 1: CÁC CÂU HỎI KHẨU VỊ & TÀI CHÍNH TINH GỌN -->
+      <div id="sectionQuestions">
+        <!-- CÂU 1: Khẩu vị -->
+        <div class="step-card active" data-step="1">
+          <h3 class="question-title">🌶️ Câu 1: Gu khẩu vị bạn thích nhất?</h3>
+          <p class="question-desc">Chọn phong cách nêm nếm khiến bạn ngon miệng nhất:</p>
+          <div class="options-grid">
+            <button type="button" class="option-btn" data-name="taste_preference" data-value="Cay nồng đậm vị">
+              <span class="option-badge">A</span>
+              <span>Cay nồng đậm vị</span>
+            </button>
+            <button type="button" class="option-btn" data-name="taste_preference" data-value="Béo ngậy thơm lừng">
+              <span class="option-badge">B</span>
+              <span>Béo ngậy thơm lừng</span>
+            </button>
+            <button type="button" class="option-btn" data-name="taste_preference" data-value="Chua cay giòn rụm">
+              <span class="option-badge">C</span>
+              <span>Chua cay giòn rụm</span>
+            </button>
+            <button type="button" class="option-btn" data-name="taste_preference" data-value="Thanh đạm ít dầu mỡ">
+              <span class="option-badge">D</span>
+              <span>Thanh đạm ít dầu mỡ</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- CÂU 2: Thể loại món -->
+        <div class="step-card" data-step="2">
+          <h3 class="question-title">🍲 Câu 2: Thể loại món bạn hay chọn nhất?</h3>
+          <p class="question-desc">Món ăn quen thuộc nhất trong các bữa ăn của bạn:</p>
+          <div class="options-grid">
+            <button type="button" class="option-btn" data-name="favorite_dish_type" data-value="Bún / Phở / Mì nước">
+              <span class="option-badge">A</span>
+              <span>Bún / Phở / Mì nước</span>
+            </button>
+            <button type="button" class="option-btn" data-name="favorite_dish_type" data-value="Cơm tấm / Cơm chiên">
+              <span class="option-badge">B</span>
+              <span>Cơm tấm / Cơm chiên</span>
+            </button>
+            <button type="button" class="option-btn" data-name="favorite_dish_type" data-value="Fastfood / Gà rán / Pizza">
+              <span class="option-badge">C</span>
+              <span>Fastfood / Gà rán / Pizza</span>
+            </button>
+            <button type="button" class="option-btn" data-name="favorite_dish_type" data-value="Đồ nướng / Lẩu sôi sục">
+              <span class="option-badge">D</span>
+              <span>Đồ nướng / Lẩu sôi sục</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- CÂU 3: Ngân sách tài chính -->
+        <div class="step-card" data-step="3">
+          <h3 class="question-title">💵 Câu 3: Mức chi tiêu trung bình một bữa ăn?</h3>
+          <p class="question-desc">Ngân sách bạn sẵn sàng chi cho một bữa ăn ngoài:</p>
+          <div class="options-grid">
+            <button type="button" class="option-btn" data-name="budget" data-value="Dưới 30k tiết kiệm">
+              <span class="option-badge">A</span>
+              <span>Dưới 30.000đ (Tiết kiệm)</span>
+            </button>
+            <button type="button" class="option-btn" data-name="budget" data-value="30k - 50k phổ thông">
+              <span class="option-badge">B</span>
+              <span>30.000đ - 50.000đ (Phổ thông)</span>
+            </button>
+            <button type="button" class="option-btn" data-name="budget" data-value="50k - 100k thoải mái">
+              <span class="option-badge">C</span>
+              <span>50.000đ - 100.000đ (Thoải mái)</span>
+            </button>
+            <button type="button" class="option-btn" data-name="budget" data-value="Trên 100k sang xịn">
+              <span class="option-badge">D</span>
+              <span>Trên 100.000đ (Sang xịn)</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- CÂU 4: Dị ứng / Kiêng kỵ -->
+        <div class="step-card" data-step="4">
+          <h3 class="question-title">⚠️ Câu 4: Bạn có dị ứng thực phẩm hoặc kiêng kỵ gì không?</h3>
+          <p class="question-desc">Nhập ngắn gọn các nguyên liệu bạn không thể ăn (nếu không có, ghi: Không):</p>
+          <div class="form-group">
+            <input type="text" id="allergy_info" class="form-control" placeholder="VD: Dị ứng tôm cua, kiêng cay nồng, không uống được sữa bò...">
+          </div>
+          <div style="text-align: right; margin-top: 1.5rem;">
+            <button type="button" class="btn btn-primary btn-block" onclick="window.surveyWizard.startAiScanning()">
+              <span>✨ Kích Hoạt AI Đối Soát Khẩu Vị ➔</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Nút điều hướng Back (cho 4 câu đầu) -->
+        <div class="wizard-nav" id="wizardNav" style="display: none;">
+          <button type="button" class="btn btn-secondary" onclick="window.surveyWizard.prevStep()">
+            ← Quay lại câu trước
+          </button>
+          <span style="font-size: 0.8rem; color: var(--text-muted);">
+            Bấm lựa chọn để tự động chuyển câu
+          </span>
+        </div>
+      </div>
+
+      <!-- SECTION 2: AI SCANNING ANIMATION -->
+      <div id="aiScanScreen" class="ai-scan-container" style="display: none;">
+        <div class="ai-radar"></div>
+        <h3 class="ai-scan-title">AI Đang Đối Soát Khẩu Vị Của Bạn...</h3>
+        <p class="ai-scan-subtitle" id="aiScanStatus">
+          Đang quét ma trận vị giác và sàng lọc các món ăn có độ tương thích cao nhất...
+        </p>
+      </div>
+
+      <!-- SECTION 3: TINDER FOOD SWIPE DECK -->
+      <div id="tinderScreen" class="tinder-wrapper" style="display: none;">
+        <div style="text-align: center; margin-bottom: 1rem;">
+          <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--text-main);">
+            🔥 Chọn Món Ăn Chân Ái
+          </h3>
+          <p style="font-size: 0.85rem; color: var(--text-muted);">
+            Bấm <strong>❌ Bỏ qua</strong> hoặc <strong>❤️ Chọn món này</strong> để chốt thực đơn hôm nay!
+          </p>
+        </div>
+
+        <div class="tinder-card-container" id="tinderCardContainer">
+          <!-- Các thẻ món ăn sẽ được JavaScript render tại đây -->
+        </div>
+
+        <!-- 2 Nút thao tác Tinder -->
+        <div class="tinder-actions">
+          <button type="button" class="tinder-btn pass" id="passBtn" title="Bỏ qua món này">
+            ❌
+          </button>
+          <button type="button" class="tinder-btn like" id="likeBtn" title="Mê món này! Chọn ngay">
+            ❤️
+          </button>
+        </div>
+
+        <div class="tinder-counter" id="tinderCounter">Món 1 / 6</div>
+      </div>
+
+      <!-- SECTION 4: XÁC NHẬN HỌ TÊN VÀ LỚP -->
+      <div id="infoScreen" style="display: none; animation: fadeIn 0.3s ease;">
+        <div class="matched-banner">
+          <div style="display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.35rem 0.85rem; background: #ffedd5; border-radius: 20px;">
+            <span style="font-size: 0.82rem; font-weight: 700; color: #ea580c; text-transform: uppercase; letter-spacing: 0.5px;">
+              🎉 Món Ăn Chân Ái Dành Cho Bạn!
+            </span>
+          </div>
+          
+          <img id="matchedDishImg" src="" alt="Món ăn đã chọn" class="matched-img">
+          
+          <div style="margin-top: 0.25rem;">
+            <h4 id="matchedDishTitle" style="font-size: 1.35rem; font-weight: 800; color: var(--text-main); margin-bottom: 0.35rem;">
+              Bún Đậu Mắm Tôm
+            </h4>
+            <p id="matchedDishTag" style="font-size: 0.88rem; color: #64748b; line-height: 1.4; margin: 0 auto;">
+              Món ăn chân ái được AI đối soát hoàn hảo từ kho 100 món cho bạn!
+            </p>
+          </div>
+        </div>
+
+        <div style="margin-bottom: 1.25rem;">
+          <h3 class="question-title">🧑‍🎓 Lưu hồ sơ ẩm thực của bạn</h3>
+          <p class="question-desc">Nhập Họ tên & Lớp để lưu hồ sơ ẩm thực, giúp chúng tôi ghi nhớ khẩu vị và đề xuất tốt hơn cho bạn ở lần sau:</p>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Họ và tên của bạn <span class="required">*</span></label>
+            <input type="text" id="full_name" class="form-control" placeholder="VD: Nguyễn Văn An" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Lớp / Nhóm học tập <span class="required">*</span></label>
+            <input type="text" id="class_name" class="form-control" placeholder="VD: 11A1, Nhóm 2..." required>
+          </div>
+        </div>
+
+        <div style="margin-top: 1.5rem;">
+          <button type="button" id="submitAllBtn" class="btn btn-primary btn-block">
+            <span>🚀 Lưu Hồ Sơ & Hoàn Tất</span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Màn hình kết quả sau khi hoàn tất -->
+    <div id="resultBox" class="result-box">
+      <div class="result-title">
+        <span>🎉 Đã Lưu Hồ Sơ Ẩm Thực Thành Công!</span>
+      </div>
+      <div id="resultContent" class="result-content"></div>
+      <div style="margin-top: 1.5rem; text-align: center;">
+        <button type="button" class="btn btn-secondary" onclick="location.reload()">
+          🔄 Làm lại khảo sát
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <footer class="footer">
+    Hôm Nay Ăn Gì? &bull; Trợ lý ẩm thực cá nhân hóa
+  </footer>
+
+  <script src="/static/js/dishes_data.js"></script>
+  <script src="/static/js/survey.js"></script>
+</body>
+</html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Rà soát 100 Món Ăn - Hôm Nay Ăn Gì?</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f8fafc; padding: 20px; color: #1e293b; }
+    h1 { text-align: center; margin-bottom: 5px; }
+    p.subtitle { text-align: center; color: #64748b; margin-bottom: 25px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+    .card { background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.06); border: 1px solid #e2e8f0; display: flex; flex-direction: column; }
+    .img-box { width: 100%; height: 180px; background: #e2e8f0; overflow: hidden; position: relative; }
+    .img-box img { width: 100%; height: 100%; object-fit: cover; }
+    .card-body { padding: 12px 14px; flex: 1; }
+    .dish-id { font-size: 11px; font-weight: 700; color: #3b82f6; text-transform: uppercase; margin-bottom: 4px; }
+    .dish-name { font-size: 15px; font-weight: 700; color: #0f172a; margin-bottom: 4px; }
+    .dish-cat { font-size: 12px; color: #64748b; margin-bottom: 6px; }
+    .dish-desc { font-size: 12px; color: #475569; line-height: 1.4; }
+  </style>
+</head>
+<body>
+  <h1>📋 Bảng Rà Soát 100 Món Ăn</h1>
+  <p class="subtitle">Kiểm tra tính đồng bộ và độ khớp của hình ảnh từng món</p>
+  <div class="grid" id="dishGrid"></div>
+
+  <script src="/static/js/dishes_data.js"></script>
+  <script>
+    const grid = document.getElementById('dishGrid');
+    if (typeof ALL_DISHES !== 'undefined') {
+      ALL_DISHES.forEach(d => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          <div class="img-box">
+            <img src="${d.img}?v=${Date.now()}" alt="${d.name}" loading="lazy">
+          </div>
+          <div class="card-body">
+            <div class="dish-id">Món #${d.id} • ${d.tag || ''}</div>
+            <div class="dish-name">${d.name}</div>
+            <div class="dish-cat">📁 ${d.category}</div>
+            <div class="dish-desc">${d.desc}</div>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+  </script>
+</body>
+</html>

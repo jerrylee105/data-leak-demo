@@ -1,0 +1,12 @@
+services:
+  data-leak-app:
+    build: .
+    container_name: ai_data_leak_demo
+    restart: unless-stopped
+    ports:
+      - "${PORT:-5000}:5000"
+    env_file:
+      - .env
+    volumes:
+      # Giữ lại file dữ liệu CSV khi khởi động lại container
+      - ./database.csv:/app/database.csv

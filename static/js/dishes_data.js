@@ -1,0 +1,608 @@
+// Kho dữ liệu 100 món ăn phong phú của "Hôm nay ăn gì?"
+// Đã tối ưu hóa hình ảnh WebP local chuẩn từng món (~40KB/ảnh)
+const ALL_DISHES = [
+  {
+    id: 1, name: "Phở Bò Tái Lăn Hà Nội",
+    category: "Bún / Phở / Mì nước", taste: "Thanh đạm ít dầu mỡ", budget_tier: "30k - 50k phổ thông",
+    allergens: ["bò"], desc: "Thịt bò xào lăn thơm lừng hành tỏi, nước dùng xương hầm thanh ngọt béo ngậy kèm quẩy giòn.",
+    img: "/static/images/dishes/dish_1.webp", tag: "Truyền thống • Bổ dưỡng"
+  },
+  {
+    id: 2, name: "Phở Gà Đồi Chặt Lá Chanh",
+    category: "Bún / Phở / Mì nước", taste: "Thanh đạm ít dầu mỡ", budget_tier: "30k - 50k phổ thông",
+    allergens: ["gà"], desc: "Gà ta da vàng óng giòn sần sật, nước dùng thanh ngọt thơm nức mùi lá chanh tươi thái chỉ.",
+    img: "/static/images/dishes/dish_2.webp", tag: "Thanh nhẹ • Đậm đà"
+  },
+  {
+    id: 3, name: "Bún Bò Huế Chả Cua Chân Giò",
+    category: "Bún / Phở / Mì nước", taste: "Cay nồng đậm vị", budget_tier: "30k - 50k phổ thông",
+    allergens: ["bò", "cua", "heo"], desc: "Nước dùng cay nồng hương sả ớt, miếng bắp bò mềm ngọt cùng viên chả cua béo ngậy.",
+    img: "/static/images/dishes/dish_3.webp", tag: "Cay nồng • Đậm chất Huế"
+  },
+  {
+    id: 4, name: "Bún Đậu Mắm Tôm Thập Cẩm",
+    category: "Bún / Phở / Mì nước", taste: "Cay nồng đậm vị", budget_tier: "30k - 50k phổ thông",
+    allergens: ["tôm", "mắm tôm", "heo"], desc: "Đậu rán giòn rụm, chả cốm dẻo thơm, thịt chân giò luộc chấm mắm tôm đánh sủi bọt chuẩn vị.",
+    img: "/static/images/dishes/dish_4.webp", tag: "Hà Nội • Khoái khẩu"
+  },
+  {
+    id: 5, name: "Bún Chả Nướng Than Hoa",
+    category: "Bún / Phở / Mì nước", taste: "Chua cay giòn rụm", budget_tier: "30k - 50k phổ thông",
+    allergens: ["heo"], desc: "Chả miếng và chả viên nướng xém cạnh thơm phức, thả trong bát nước mắm chua ngọt đu đủ giòn tan.",
+    img: "/static/images/dishes/dish_5.webp", tag: "Đặc sản • Dễ ăn"
+  },
+  {
+    id: 6, name: "Bún Riêu Cua Bắp Bò Trứng Vịt Lộn",
+    category: "Bún / Phở / Mì nước", taste: "Chua cay giòn rụm", budget_tier: "30k - 50k phổ thông",
+    allergens: ["cua", "bò", "trứng"], desc: "Vị chua thanh mát của dấm bỗng, riêu cua đầy đặn ăn kèm tóp mỡ hành phi béo ngậy.",
+    img: "/static/images/dishes/dish_6.webp", tag: "Chua thanh • Đậm đà"
+  },
+  {
+    id: 7, name: "Bánh Canh Ghẹ Tươi Nguyên Con",
+    category: "Bún / Phở / Mì nước", taste: "Béo ngậy thơm lừng", budget_tier: "50k - 100k thoải mái",
+    allergens: ["ghẹ", "cua", "hải sản"], desc: "Sợi bánh canh dai dai đắm chìm trong nước súp sệt ngọt đậm đà từ ghẹ biển tươi rói.",
+    img: "/static/images/dishes/dish_7.webp", tag: "Hải sản • Cao cấp"
+  },
+  {
+    id: 8, name: "Bánh Canh Cua Giò Heo Nước Sệt",
+    category: "Bún / Phở / Mì nước", taste: "Béo ngậy thơm lừng", budget_tier: "30k - 50k phổ thông",
+    allergens: ["cua", "heo"], desc: "Thịt cua bùi béo, chả cá dai giòn cùng khoanh giò heo mềm rục trong nước dùng sánh đỏ.",
+    img: "/static/images/dishes/dish_8.webp", tag: "Sài Gòn • Bổ dưỡng"
+  },
+  {
+    id: 9, name: "Hủ Tiếu Nam Vang Thập Cẩm",
+    category: "Bún / Phở / Mì nước", taste: "Béo ngậy thơm lừng", budget_tier: "30k - 50k phổ thông",
+    allergens: ["tôm", "heo", "trứng"], desc: "Tô hủ tiếu ngọt lịm từ nước hầm xương mực, ngập tràn tôm tươi, gan heo, thịt bằm và trứng cút.",
+    img: "/static/images/dishes/dish_9.webp", tag: "Miền Nam • Tròn vị"
+  },
+  {
+    id: 10, name: "Hủ Tiếu Bò Kho Nóng Hổi",
+    category: "Bún / Phở / Mì nước", taste: "Cay nồng đậm vị", budget_tier: "30k - 50k phổ thông",
+    allergens: ["bò"], desc: "Bò kho thơm nức mùi hoa hồi quế, nạm gân bò hầm mềm rục ăn kèm rau húng quế và giá sống.",
+    img: "/static/images/dishes/dish_10.webp", tag: "Đậm vị • No lâu"
+  },
+  {
+    id: 11, name: "Mì Quảng Tôm Thịt Trứng Cút",
+    category: "Bún / Phở / Mì nước", taste: "Cay nồng đậm vị", budget_tier: "30k - 50k phổ thông",
+    allergens: ["tôm", "heo", "đậu phộng", "lạc"], desc: "Sợi mì vàng óng dai mềm, nước nhưn sánh đậm đà rắc đậu phộng rang giòn thơm lừng.",
+    img: "/static/images/dishes/dish_11.webp", tag: "Xứ Quảng • Đậm đà"
+  },
+  {
+    id: 12, name: "Cao Lầu Hội An Thịt Xíu",
+    category: "Bún / Phở / Mì nước", taste: "Béo ngậy thơm lừng", budget_tier: "30k - 50k phổ thông",
+    allergens: ["heo"], desc: "Sợi mì sần sật ăn kèm thịt xá xíu đậm đà, tóp mỡ chiên giòn tan và rau sống Trà Quế tươi non.",
+    img: "/static/images/dishes/dish_12.webp", tag: "Hội An • Độc đáo"
+  },
+  {
+    id: 13, name: "Mì Vịt Tiềm Thuốc Bắc Nấm Đông Cô",
+    category: "Bún / Phở / Mì nước", taste: "Thanh đạm ít dầu mỡ", budget_tier: "50k - 100k thoải mái",
+    allergens: ["vịt"], desc: "Đùi vịt góc tư chiên giòn rồi hầm mềm rục thơm nức hương vị thảo mộc thuốc bắc đại bổ dưỡng.",
+    img: "/static/images/dishes/dish_13.webp", tag: "Bổ dưỡng • Thảo mộc"
+  },
+  {
+    id: 14, name: "Mì Hoành Thánh Xá Xíu Tôm Thịt",
+    category: "Bún / Phở / Mì nước", taste: "Thanh đạm ít dầu mỡ", budget_tier: "30k - 50k phổ thông",
+    allergens: ["tôm", "heo"], desc: "Những viên hoành thánh nhân tôm thịt căng tròn mọng nước bơi trong nước lèo trong veo ngọt thanh.",
+    img: "/static/images/dishes/dish_14.webp", tag: "Trung Hoa • Thanh ngọt"
+  },
+  {
+    id: 15, name: "Bún Ốc Chuối Đậu Tía Tô",
+    category: "Bún / Phở / Mì nước", taste: "Chua cay giòn rụm", budget_tier: "30k - 50k phổ thông",
+    allergens: ["ốc"], desc: "Ốc nhồi giòn sần sật, chuối xanh bùi ngậy đượm trong nước dùng chua thanh dấm bỗng ấm bụng.",
+    img: "/static/images/dishes/dish_15.webp", tag: "Hà Nội xưa • Dân dã"
+  },
+  {
+    id: 16, name: "Bún Mắm Miền Tây Cá Lóc Heo Quay",
+    category: "Bún / Phở / Mì nước", taste: "Cay nồng đậm vị", budget_tier: "50k - 100k thoải mái",
+    allergens: ["cá", "mắm cá", "heo", "tôm"], desc: "Hương mắm linh mắm sặc ngào ngạt, topping đầy ắp tôm tươi, mực, heo quay da giòn và cà tím.",
+    img: "/static/images/dishes/dish_16.webp", tag: "Miền Tây • Đậm hương"
+  },
+  {
+    id: 17, name: "Bún Cá Rô Đồng Rau Cần",
+    category: "Bún / Phở / Mì nước", taste: "Thanh đạm ít dầu mỡ", budget_tier: "30k - 50k phổ thông",
+    allergens: ["cá"], desc: "Cá rô đồng luộc gỡ thịt chiên vàng giòn rụm, nước dùng thanh ngọt tự nhiên kèm rau cần xanh mướt.",
+    img: "/static/images/dishes/dish_17.webp", tag: "Đồng quê • Thanh mát"
+  },
+  {
+    id: 18, name: "Bún Bò Cay Bạc Liêu",
+    category: "Bún / Phở / Mì nước", taste: "Cay nồng đậm vị", budget_tier: "30k - 50k phổ thông",
+    allergens: ["bò"], desc: "Vị cay xé lưỡi từ ớt sừng trâu thơm nồng, từng miếng nạm bò mềm ngập trong nước sốt cay rực lửa.",
+    img: "/static/images/dishes/dish_18.webp", tag: "Siêu cay • Thách thức"
+  },
+  {
+    id: 19, name: "Mì Ramen Thịt Nướng Chashu Nhật Bản",
+    category: "Bún / Phở / Mì nước", taste: "Cay nồng đậm vị", budget_tier: "50k - 100k thoải mái",
+    allergens: ["heo", "trứng", "đậu nành"], desc: "Nước dùng Tonkotsu hầm xương 12 tiếng sánh đậm, thịt cuộn Chashu tan ngay trong miệng.",
+    img: "/static/images/dishes/dish_19.webp", tag: "Nhật Bản • Béo ngậy"
+  },
+  {
+    id: 20, name: "Mì Udon Bò Bào Trứng Onsen",
+    category: "Bún / Phở / Mì nước", taste: "Thanh đạm ít dầu mỡ", budget_tier: "50k - 100k thoải mái",
+    allergens: ["bò", "trứng"], desc: "Sợi mì Udon mập mạp dai mềm trong nước súp dashi thanh dịu, quyện cùng lòng đỏ trứng chần béo bùi.",
+    img: "/static/images/dishes/dish_20.webp", tag: "Thanh vị • Nhẹ nhàng"
+  },
+  {
+    id: 21, name: "Bánh Đa Cua Hải Phòng Chả Lá Lốt",
+    category: "Bún / Phở / Mì nước", taste: "Chua cay giòn rụm", budget_tier: "30k - 50k phổ thông",
+    allergens: ["cua", "heo"], desc: "Sợi bánh đa đỏ dai giòn đặc trưng, chả lá lốt chiên thơm lừng cùng gạch cua đồng béo ngậy.",
+    img: "/static/images/dishes/dish_21.webp", tag: "Đất Cảng • Nức tiếng"
+  },
+  {
+    id: 22, name: "Miến Gà Trộn Xì Dầu Chua Ngọt",
+    category: "Bún / Phở / Mì nước", taste: "Chua cay giòn rụm", budget_tier: "30k - 50k phổ thông",
+    allergens: ["gà", "đậu phộng", "lạc"], desc: "Miến dong dai sần sật trộn sốt xì dầu chua ngọt, thịt gà xé phay giòn da rắc hành phi thơm nức.",
+    img: "/static/images/dishes/dish_22.webp", tag: "Món trộn • Kích thích vị giác"
+  },
+  {
+    id: 23, name: "Miến Lươn Giòn Xào Rau Răm",
+    category: "Bún / Phở / Mì nước", taste: "Chua cay giòn rụm", budget_tier: "50k - 100k thoải mái",
+    allergens: ["lươn"], desc: "Từng cọng lươn đồng tẩm bột chiên vàng giòn rụm ăn cùng sợi miến mềm thấm đẫm gia vị tiêu ớt cay cay.",
+    img: "/static/images/dishes/dish_23.webp", tag: "Nghệ An • Giòn rụm"
+  },
+  {
+    id: 24, name: "Bún Nước Lèo Sóc Trăng Cá Lóc",
+    category: "Bún / Phở / Mì nước", taste: "Thanh đạm ít dầu mỡ", budget_tier: "30k - 50k phổ thông",
+    allergens: ["cá", "mắm bò hóc"], desc: "Nước súp trong veo ngọt ngào từ ngải bún và cá lóc đồng nướng, ăn kèm bắp chuối thái ghém.",
+    img: "/static/images/dishes/dish_24.webp", tag: "Sóc Trăng • Thanh ngọt"
+  },
+  {
+    id: 25, name: "Mì Trộn Xá Xíu Lòng Đào Tóp Mỡ",
+    category: "Bún / Phở / Mì nước", taste: "Cay nồng đậm vị", budget_tier: "30k - 50k phổ thông",
+    allergens: ["heo", "trứng"], desc: "Sợi mì trứng dai giòn trộn sa tế tỏi ớt bùng nổ vị giác, ngập tràn tóp mỡ giòn tan béo ngậy.",
+    img: "/static/images/dishes/dish_25.webp", tag: "Hot trend • Giòn ngậy"
+  },
+  {
+    id: 26, name: "Cơm Tấm Sườn Bì Chả Trứng Ốp La",
+    category: "Cơm tấm / Cơm chiên", taste: "Béo ngậy thơm lừng", budget_tier: "30k - 50k phổ thông",
+    allergens: ["heo", "trứng"], desc: "Miếng sườn cốt lết nướng than hoa thơm nức mũi, chả trứng béo ngậy kèm tóp mỡ hành phi giòn tan.",
+    img: "/static/images/dishes/dish_26.webp", tag: "Sài Gòn • Kinh điển"
+  },
+  {
+    id: 27, name: "Cơm Gà Xối Mỡ Da Giòn Cơm Đỏ",
+    category: "Cơm tấm / Cơm chiên", taste: "Chua cay giòn rụm", budget_tier: "30k - 50k phổ thông",
+    allergens: ["gà"], desc: "Đùi gà góc tư xối mỡ lớp da giòn rụm rộp rộp, thịt bên trong mọng nước ăn cùng hạt cơm rang cà chua đỏ au.",
+    img: "/static/images/dishes/dish_27.webp", tag: "Giòn rụm • No căng"
+  },
+  {
+    id: 28, name: "Cơm Gà Hải Nam Cơm Nấu Nước Luộc Gà",
+    category: "Cơm tấm / Cơm chiên", taste: "Thanh đạm ít dầu mỡ", budget_tier: "50k - 100k thoải mái",
+    allergens: ["gà"], desc: "Thịt gà luộc mềm mọng da giòn, hạt cơm dẻo quánh nấu từ nước luộc gà béo thơm chấm nước sốt gừng ớt tỏi băm.",
+    img: "/static/images/dishes/dish_28.webp", tag: "Hải Nam • Thanh tao"
+  },
+  {
+    id: 29, name: "Cơm Chiên Dương Châu Hải Sản",
+    category: "Cơm tấm / Cơm chiên", taste: "Thanh đạm ít dầu mỡ", budget_tier: "30k - 50k phổ thông",
+    allergens: ["tôm", "trứng", "lạp xưởng"], desc: "Cơm chiên hạt tơi săn vàng óng, đan xen tôm tươi, đậu Hà Lan, cà rốt và lạp xưởng thơm ngậy.",
+    img: "/static/images/dishes/dish_29.webp", tag: "Phổ biến • Dễ ăn"
+  },
+  {
+    id: 30, name: "Cơm Rang Dưa Bò Phố Cổ",
+    category: "Cơm tấm / Cơm chiên", taste: "Chua cay giòn rụm", budget_tier: "30k - 50k phổ thông",
+    allergens: ["bò"], desc: "Hạt cơm đảo giòn lách tách, dưa cải chua giòn xào đậm đà cùng thịt bò mềm ngọt không hề ngán.",
+    img: "/static/images/dishes/dish_30.webp", tag: "Hà Nội • Khoái khẩu"
+  },
+  {
+    id: 31, name: "Cơm Bò Xào Lúc Lắc Khoai Tây Chiên",
+    category: "Cơm tấm / Cơm chiên", taste: "Cay nồng đậm vị", budget_tier: "50k - 100k thoải mái",
+    allergens: ["bò"], desc: "Từng viên thịt thăn bò mềm thơm đậm đà sốt tiêu đen, ăn cùng ớt chuông giòn ngọt và khoai chiên vàng rộm.",
+    img: "/static/images/dishes/dish_31.webp", tag: "Đậm vị • Sang xịn"
+  },
+  {
+    id: 32, name: "Cơm Niêu Singapore Cháy Giòn Sốt Thịt",
+    category: "Cơm tấm / Cơm chiên", taste: "Cay nồng đậm vị", budget_tier: "50k - 100k thoải mái",
+    allergens: ["heo", "bò"], desc: "Lớp cháy vàng rụm dưới đáy niêu đất giòn tan, rưới đẫm nước sốt thịt xèo xèo thơm nức mũi.",
+    img: "/static/images/dishes/dish_32.webp", tag: "Cơm cháy • Xèo xèo"
+  },
+  {
+    id: 33, name: "Cơm Sườn Que Nướng Mật Ong",
+    category: "Cơm tấm / Cơm chiên", taste: "Béo ngậy thơm lừng", budget_tier: "30k - 50k phổ thông",
+    allergens: ["heo"], desc: "Dẻ sườn non tẩm ướp mật ong rừng nướng óng ả, cắn vào mềm ngọt róc xương đậm đà khó cưỡng.",
+    img: "/static/images/dishes/dish_33.webp", tag: "Mật ong • Đậm đà"
+  },
+  {
+    id: 34, name: "Cơm Trộn Hàn Quốc Bibimbap Trứng Lòng Đào",
+    category: "Cơm tấm / Cơm chiên", taste: "Cay nồng đậm vị", budget_tier: "50k - 100k thoải mái",
+    allergens: ["bò", "trứng", "mè", "vừng"], desc: "Sốt ớt Gochujang cay ngọt trộn cùng các loại rau củ thanh mát, thịt bò xào và lòng đỏ trứng béo ngậy.",
+    img: "/static/images/dishes/dish_34.webp", tag: "Hàn Quốc • Đủ chất"
+  },
+  {
+    id: 35, name: "Cơm Cà Ri Nhật Bản Thịt Heo Chiên Xù",
+    category: "Cơm tấm / Cơm chiên", taste: "Béo ngậy thơm lừng", budget_tier: "50k - 100k thoải mái",
+    allergens: ["heo", "sữa"], desc: "Sốt cà ri sánh mịn thơm nồng gia vị thảo mộc ăn kèm miếng thịt Tonkatsu giòn tan rụm rộp.",
+    img: "/static/images/dishes/dish_35.webp", tag: "Nhật Bản • Béo thơm"
+  },
+  {
+    id: 36, name: "Cơm Heo Quay Kho Cải Chua Đậm Đà",
+    category: "Cơm tấm / Cơm chiên", taste: "Chua cay giòn rụm", budget_tier: "30k - 50k phổ thông",
+    allergens: ["heo"], desc: "Thịt heo quay da giòn kho nhừ cùng dưa cải chua ngấm đẫm vị nước tương, ăn vét sạch nồi cơm.",
+    img: "/static/images/dishes/dish_36.webp", tag: "Đưa cơm • Đậm đà"
+  },
+  {
+    id: 37, name: "Cơm Cá Basa Kho Tộ Nồi Đất Tiêu Đen",
+    category: "Cơm tấm / Cơm chiên", taste: "Cay nồng đậm vị", budget_tier: "Dưới 30k tiết kiệm",
+    allergens: ["cá"], desc: "Khúc cá basa béo ngậy kho keo trong tộ đất, nước hàng nâu óng thơm lừng hạt tiêu cay nồng ấm bụng.",
+    img: "/static/images/dishes/dish_37.webp", tag: "Gia đình • Đậm vị"
+  },
+  {
+    id: 38, name: "Cơm Thịt Ba Chỉ Kho Trứng Cút",
+    category: "Cơm tấm / Cơm chiên", taste: "Béo ngậy thơm lừng", budget_tier: "30k - 50k phổ thông",
+    allergens: ["heo", "trứng"], desc: "Từng miếng ba chỉ thái dày núng nính mềm tan, trứng cút ngấm đượm nước dừa ngọt thơm dịu dàng.",
+    img: "/static/images/dishes/dish_38.webp", tag: "Cơm mẹ nấu • Ấm áp"
+  },
+  {
+    id: 39, name: "Cơm Canh Chua Cá Lóc Bạc Hà Giá Đỗ",
+    category: "Cơm tấm / Cơm chiên", taste: "Chua cay giòn rụm", budget_tier: "30k - 50k phổ thông",
+    allergens: ["cá"], desc: "Tô canh chua me thanh mát rượi ăn cùng cơm trắng, cá lóc ngọt thịt chấm mắm ớt cay nồng xua tan cái nóng.",
+    img: "/static/images/dishes/dish_39.webp", tag: "Miền Tây • Thanh nhiệt"
+  },
+  {
+    id: 40, name: "Cơm Đùi Gà Nướng Teriyaki Sốt Nhật",
+    category: "Cơm tấm / Cơm chiên", taste: "Béo ngậy thơm lừng", budget_tier: "30k - 50k phổ thông",
+    allergens: ["gà", "đậu nành"], desc: "Gà nướng phủ sốt Teriyaki nâu bóng óng ả, ngọt thanh đậm đà rắc vừng rang thơm nức mũi.",
+    img: "/static/images/dishes/dish_40.webp", tag: "Ngọt thanh • Hấp dẫn"
+  },
+  {
+    id: 41, name: "Xôi Xéo Gà Xé Hành Phi Mỡ Hành",
+    category: "Cơm tấm / Cơm chiên", taste: "Thanh đạm ít dầu mỡ", budget_tier: "Dưới 30k tiết kiệm",
+    allergens: ["gà"], desc: "Hạt xôi nếp vàng óng dẻo quánh, đỗ xanh thái mỏng bùi béo rưới mỡ gà thơm lừng và hành phi giòn tan.",
+    img: "/static/images/dishes/dish_41.webp", tag: "Hà Nội • Ăn sáng no nê"
+  },
+  {
+    id: 42, name: "Xôi Mặn Thập Cẩm Lạp Xưởng Chà Bông",
+    category: "Cơm tấm / Cơm chiên", taste: "Béo ngậy thơm lừng", budget_tier: "Dưới 30k tiết kiệm",
+    allergens: ["heo", "trứng cút", "đậu phộng", "lạc"], desc: "Gói xôi nóng hổi ngập tràn pa-tê thơm béo, lạp xưởng chiên, chà bông tơi xốp và đậu phộng rang giòn.",
+    img: "/static/images/dishes/dish_42.webp", tag: "Sài Gòn • Tiết kiệm"
+  },
+  {
+    id: 43, name: "Cơm Lam Gà Nướng Mắc Khén Tây Bắc",
+    category: "Cơm tấm / Cơm chiên", taste: "Cay nồng đậm vị", budget_tier: "50k - 100k thoải mái",
+    allergens: ["gà"], desc: "Cơm nếp nương nướng trong ống tre dẻo ngọt, ăn cùng gà đồi nướng than hoa thơm mùi hạt mắc khén rừng.",
+    img: "/static/images/dishes/dish_43.webp", tag: "Tây Bắc • Đặc sản"
+  },
+  {
+    id: 44, name: "Cơm Cháy Chà Bông Kho Quẹt Tôm Thịt",
+    category: "Cơm tấm / Cơm chiên", taste: "Cay nồng đậm vị", budget_tier: "30k - 50k phổ thông",
+    allergens: ["tôm", "heo"], desc: "Miếng cơm cháy giòn rụm quẹt ngập trong tộ kho quẹt sánh đặc ngập tôm khô, tóp mỡ và tiêu xanh.",
+    img: "/static/images/dishes/dish_44.webp", tag: "Dân dã • Gây nghiện"
+  },
+  {
+    id: 45, name: "Cơm Rang Kim Chi Thịt Bò Cay Cay",
+    category: "Cơm tấm / Cơm chiên", taste: "Cay nồng đậm vị", budget_tier: "30k - 50k phổ thông",
+    allergens: ["bò"], desc: "Cơm rang săn hạt quyện cùng kim chi chua cay giòn sần sật và thịt bò xào thơm nức mũi.",
+    img: "/static/images/dishes/dish_45.webp", tag: "Chua cay • Đậm vị"
+  },
+  {
+    id: 46, name: "Cơm Chiên Cá Mặn Chợ Lớn Nồi Đất",
+    category: "Cơm tấm / Cơm chiên", taste: "Cay nồng đậm vị", budget_tier: "30k - 50k phổ thông",
+    allergens: ["cá", "gà"], desc: "Cơm rang vàng óng thơm lừng mùi khô cá mặn, thịt ức gà xé và bắp cải giòn sần sật đậm đà.",
+    img: "/static/images/dishes/dish_46.webp", tag: "Chợ Lớn • Đậm đà"
+  },
+  {
+    id: 47, name: "Cơm Tấm Ba Rọi Nướng Muối Ớt",
+    category: "Cơm tấm / Cơm chiên", taste: "Cay nồng đậm vị", budget_tier: "30k - 50k phổ thông",
+    allergens: ["heo"], desc: "Thịt ba rọi ướp muối ớt nướng than hoa lớp da giòn tanh tách, mỡ chảy xèo xèo cay nồng tê tái.",
+    img: "/static/images/dishes/dish_47.webp", tag: "Cay xé • Đậm vị"
+  },
+  {
+    id: 48, name: "Cơm Sườn Non Sốt Chua Ngọt",
+    category: "Cơm tấm / Cơm chiên", taste: "Chua cay giòn rụm", budget_tier: "30k - 50k phổ thông",
+    allergens: ["heo"], desc: "Sườn non chiên giòn rim sốt cà chua dấm đường óng ả, cắn vào mềm ngọt đậm đà cực kỳ đưa cơm.",
+    img: "/static/images/dishes/dish_48.webp", tag: "Chua ngọt • Dễ ăn"
+  },
+  {
+    id: 49, name: "Cơm Đùi Vịt Quay Bắc Kinh Da Giòn",
+    category: "Cơm tấm / Cơm chiên", taste: "Béo ngậy thơm lừng", budget_tier: "50k - 100k thoải mái",
+    allergens: ["vịt"], desc: "Lớp da vịt quay mỏng tanh vàng ruộm óng ánh mật ong, thịt vịt mềm thơm nức mũi chấm nước tương gừng.",
+    img: "/static/images/dishes/dish_49.webp", tag: "Bắc Kinh • Thơm ngậy"
+  },
+  {
+    id: 50, name: "Cơm Thăn Bò Xào Nấm Kim Châm Thanh Đạm",
+    category: "Cơm tấm / Cơm chiên", taste: "Thanh đạm ít dầu mỡ", budget_tier: "30k - 50k phổ thông",
+    allergens: ["bò"], desc: "Bò thăn ngọt mềm xào chín tới cùng nấm kim châm giòn sần sật, thanh mát nhẹ bụng mà giàu đạm.",
+    img: "/static/images/dishes/dish_50.webp", tag: "Eat Clean • Thanh đạm"
+  },
+  {
+    id: 51, name: "Combo Gà Rán Giòn Cay Sốt Phô Mai Kéo Sợi",
+    category: "Fastfood / Gà rán / Pizza", taste: "Chua cay giòn rụm", budget_tier: "50k - 100k thoải mái",
+    allergens: ["gà", "sữa", "phô mai"], desc: "Lớp da gà giòn tan rụm rộp, thịt bên trong mọng nước đẫm sốt phô mai cheddar béo ngậy thơm nức.",
+    img: "/static/images/dishes/dish_51.webp", tag: "Khoái khẩu • Giòn rụm"
+  },
+  {
+    id: 52, name: "Gà Rán Sốt Đậu Tỏi Hàn Quốc",
+    category: "Fastfood / Gà rán / Pizza", taste: "Béo ngậy thơm lừng", budget_tier: "50k - 100k thoải mái",
+    allergens: ["gà", "đậu nành"], desc: "Gà rán phủ đẫm sốt tương đen ngọt dịu thơm nồng tỏi phi, rắc mè trắng chuẩn phong cách Seoul.",
+    img: "/static/images/dishes/dish_52.webp", tag: "Hàn Quốc • Ngọt thơm"
+  },
+  {
+    id: 53, name: "Burger Bò Phô Mai Nướng Lửa Hồng Double Cheese",
+    category: "Fastfood / Gà rán / Pizza", taste: "Béo ngậy thơm lừng", budget_tier: "30k - 50k phổ thông",
+    allergens: ["bò", "sữa", "phô mai"], desc: "Hai lớp thịt bò xay nướng than hồng thơm khói, kẹp phô mai Mỹ tan chảy và sốt mayonnaise béo bùi.",
+    img: "/static/images/dishes/dish_53.webp", tag: "Burger • Đậm chất Mỹ"
+  },
+  {
+    id: 54, name: "Pizza Hải Sản Sốt Pesto Phô Mai Mozzarella",
+    category: "Fastfood / Gà rán / Pizza", taste: "Thanh đạm ít dầu mỡ", budget_tier: "Trên 100k sang xịn",
+    allergens: ["tôm", "mực", "sữa", "phô mai"], desc: "Đế bánh nướng củi giòn viền xốp mềm, phủ tôm sú, mực tươi và sốt lá húng tây béo thơm ngất ngây.",
+    img: "/static/images/dishes/dish_54.webp", tag: "Pizza Ý • Cao cấp"
+  },
+  {
+    id: 55, name: "Pizza Bò Băm Xúc Xích Phô Mai Ngập Ngụa",
+    category: "Fastfood / Gà rán / Pizza", taste: "Béo ngậy thơm lừng", budget_tier: "50k - 100k thoải mái",
+    allergens: ["bò", "heo", "sữa", "phô mai"], desc: "Lớp phô mai kéo sợi dài hàng mét, ngập tràn thịt bò nướng tảng và xúc xích xông khói đậm đà.",
+    img: "/static/images/dishes/dish_55.webp", tag: "Pizza • Phô mai béo"
+  },
+  {
+    id: 56, name: "Mì Ý Sốt Bò Băm Bolognese Cổ Điển",
+    category: "Fastfood / Gà rán / Pizza", taste: "Chua cay giòn rụm", budget_tier: "30k - 50k phổ thông",
+    allergens: ["bò", "sữa"], desc: "Sợi mì Ý luộc al dente dai chuẩn vị, quyện sốt cà chua thịt bò băm hầm mềm rắc phô mai bột thơm béo.",
+    img: "/static/images/dishes/dish_56.webp", tag: "Mì Ý • Cổ điển"
+  },
+  {
+    id: 57, name: "Mì Ý Carbonara Sốt Kem Thịt Xông Khói",
+    category: "Fastfood / Gà rán / Pizza", taste: "Béo ngậy thơm lừng", budget_tier: "50k - 100k thoải mái",
+    allergens: ["heo", "sữa", "trứng", "phô mai"], desc: "Sốt kem tươi và lòng đỏ trứng gà béo ngậy thơm lừng, thịt bacon xông khói áp chảo giòn rụm xém cạnh.",
+    img: "/static/images/dishes/dish_57.webp", tag: "Béo ngậy • Châu Âu"
+  },
+  {
+    id: 58, name: "Bánh Mì Kebab Thổ Nhĩ Kỳ Sốt Tỏi",
+    category: "Fastfood / Gà rán / Pizza", taste: "Cay nồng đậm vị", budget_tier: "Dưới 30k tiết kiệm",
+    allergens: ["heo", "sữa"], desc: "Thịt nướng xiên quay tẩm ướp thảo mộc đậm vị, nhồi trong bánh mì tam giác giòn rụm đẫm sốt tỏi cay nồng.",
+    img: "/static/images/dishes/dish_58.webp", tag: "Đường phố • Nhanh gọn"
+  },
+  {
+    id: 59, name: "Bánh Mì Thịt Nguội Pa-tê Cột Đèn Hải Phòng",
+    category: "Fastfood / Gà rán / Pizza", taste: "Cay nồng đậm vị", budget_tier: "Dưới 30k tiết kiệm",
+    allergens: ["heo"], desc: "Vỏ bánh giòn tan, ngập đầy pa-tê béo bùi nóng hổi tươm mỡ và tương ớt Chí Chương cay nồng nức mũi.",
+    img: "/static/images/dishes/dish_59.webp", tag: "Đặc sản • Cay nồng"
+  },
+  {
+    id: 60, name: "Bánh Mì Chảo Bò Xúc Xích Trứng Lòng Đào",
+    category: "Fastfood / Gà rán / Pizza", taste: "Béo ngậy thơm lừng", budget_tier: "30k - 50k phổ thông",
+    allergens: ["bò", "heo", "trứng"], desc: "Chiếc chảo gang nóng hổi xèo xèo sốt cà chua sánh mịn, chấm bánh mì giòn rụm với lòng đào trứng gà béo bùi.",
+    img: "/static/images/dishes/dish_60.webp", tag: "Bánh mì chảo • No căng"
+  },
+  {
+    id: 61, name: "Khoai Tây Chiên Lắc Phô Mai Bột Xí Muội",
+    category: "Fastfood / Gà rán / Pizza", taste: "Chua cay giòn rụm", budget_tier: "Dưới 30k tiết kiệm",
+    allergens: ["sữa"], desc: "Từng thanh khoai tây chiên giòn tan ngoài giòn trong mềm, phủ ngập bột phô mai mặn ngọt chua dịu cực cuốn.",
+    img: "/static/images/dishes/dish_61.webp", tag: "Ăn vặt • Vui miệng"
+  },
+  {
+    id: 62, name: "Bánh Tráng Trộn Long An Khô Bò Trứng Cút",
+    category: "Fastfood / Gà rán / Pizza", taste: "Chua cay giòn rụm", budget_tier: "Dưới 30k tiết kiệm",
+    allergens: ["bò", "tôm", "trứng", "đậu phộng", "lạc"], desc: "Bánh tráng dẻo ngấm sốt bò me chua cay, khô mực, trứng cút lòng đào và xoài chua băm nhỏ giòn sần sật.",
+    img: "/static/images/dishes/dish_62.webp", tag: "Ăn vặt thần thánh"
+  },
+  {
+    id: 63, name: "Bánh Tráng Nướng Đà Lạt Trứng Thịt Xúc Xích",
+    category: "Fastfood / Gà rán / Pizza", taste: "Chua cay giòn rụm", budget_tier: "Dưới 30k tiết kiệm",
+    allergens: ["heo", "trứng", "tôm"], desc: "'Pizza Việt Nam' nướng than hồng giòn rụm rộp rộp, thơm nức mùi trứng gà, hành lá, ruốc tép và sốt mayonnaise.",
+    img: "/static/images/dishes/dish_63.webp", tag: "Đà Lạt • Giòn cay"
+  },
+  {
+    id: 64, name: "Bắp Xào Bơ Tép Mỡ Hành Thơm Lừng",
+    category: "Fastfood / Gà rán / Pizza", taste: "Béo ngậy thơm lừng", budget_tier: "Dưới 30k tiết kiệm",
+    allergens: ["tôm", "sữa", "bơ"], desc: "Hạt bắp ngọt xào bơ thơm ngát béo ngậy, đan xen con ruốc tép mặn mòi và mỡ hành xanh mướt.",
+    img: "/static/images/dishes/dish_64.webp", tag: "Đường phố • Thơm béo"
+  },
+  {
+    id: 65, name: "Tokbokki Bánh Gạo Cay Phô Mai Hàn Quốc",
+    category: "Fastfood / Gà rán / Pizza", taste: "Cay nồng đậm vị", budget_tier: "30k - 50k phổ thông",
+    allergens: ["sữa", "phô mai"], desc: "Bánh gạo mềm dẻo ngập trong sốt ớt đỏ au cay nồng ấm sực, phủ phô mai béo ngậy kéo sợi dài tít tắp.",
+    img: "/static/images/dishes/dish_65.webp", tag: "Hàn Quốc • Cay ấm"
+  },
+  {
+    id: 66, name: "Kimbap Cơm Cuộn Rong Biển Chiên Xù",
+    category: "Fastfood / Gà rán / Pizza", taste: "Chua cay giòn rụm", budget_tier: "30k - 50k phổ thông",
+    allergens: ["trứng", "mè", "vừng"], desc: "Cơm cuộn xúc xích thanh cua lăn bột chiên xù giòn tan rụm, chấm sốt tương ớt mayonnaise thơm béo.",
+    img: "/static/images/dishes/dish_66.webp", tag: "Hàn Quốc • Giòn rụm"
+  },
+  {
+    id: 67, name: "Nem Chua Rán Hà Nội Giòn Thơm Cay Cay",
+    category: "Fastfood / Gà rán / Pizza", taste: "Cay nồng đậm vị", budget_tier: "Dưới 30k tiết kiệm",
+    allergens: ["heo"], desc: "Từng cây nem tẩm bột chiên vàng rộm giòn tan ngoài vỏ, dẻo dai bên trong chấm tương ớt cay xé lưỡi.",
+    img: "/static/images/dishes/dish_67.webp", tag: "Hà Nội • Ăn vặt bất hủ"
+  },
+  {
+    id: 68, name: "Phô Mai Que Kéo Sợi Giòn Tan",
+    category: "Fastfood / Gà rán / Pizza", taste: "Béo ngậy thơm lừng", budget_tier: "Dưới 30k tiết kiệm",
+    allergens: ["sữa", "phô mai"], desc: "Que phô mai chiên xù vỏ ngoài giòn rụm, bên trong nhân phô mai béo ngậy dẻo quánh kéo sợi thơm lừng.",
+    img: "/static/images/dishes/dish_68.webp", tag: "Béo ngậy • Trẻ trung"
+  },
+  {
+    id: 69, name: "Chân Gà Rút Xương Sốt Thái Chua Cay",
+    category: "Fastfood / Gà rán / Pizza", taste: "Chua cay giòn rụm", budget_tier: "50k - 100k thoải mái",
+    allergens: ["gà"], desc: "Chân gà giòn sần sật ngấm đẫm sốt me Thái chua ngọt cay xè, trộn cùng cóc non, xoài xanh thơm lừng lá chanh.",
+    img: "/static/images/dishes/dish_69.webp", tag: "Chua cay • Siêu giòn"
+  },
+  {
+    id: 70, name: "Trứng Cút Lộn Xào Me Đậu Phộng",
+    category: "Fastfood / Gà rán / Pizza", taste: "Chua cay giòn rụm", budget_tier: "Dưới 30k tiết kiệm",
+    allergens: ["trứng", "đậu phộng", "lạc"], desc: "Trứng cút lộn béo bùi quyện sốt me sánh đặc chua ngọt cay nồng, rắc đậu phộng bùi thơm ăn cùng rau răm.",
+    img: "/static/images/dishes/dish_70.webp", tag: "Chua ngọt • Đậm vị"
+  },
+  {
+    id: 71, name: "Bánh Gối Nhân Thịt Mộc Nhĩ Vỏ Giòn",
+    category: "Fastfood / Gà rán / Pizza", taste: "Chua cay giòn rụm", budget_tier: "Dưới 30k tiết kiệm",
+    allergens: ["heo", "trứng"], desc: "Vỏ bánh gập hình quạt chiên vàng ruộm giòn tan, nhân thịt băm miến mộc nhĩ chấm nước mắm đu đủ giòn ngọt.",
+    img: "/static/images/dishes/dish_71.webp", tag: "Mùa đông • Giòn thơm"
+  },
+  {
+    id: 72, name: "Tacos Bò Nướng Mexico Sốt Guacamole",
+    category: "Fastfood / Gà rán / Pizza", taste: "Cay nồng đậm vị", budget_tier: "50k - 100k thoải mái",
+    allergens: ["bò", "sữa"], desc: "Vỏ bánh ngô giòn rụm kẹp thịt bò nướng cay nồng, ăn kèm sốt quả bơ béo ngậy và sốt cà chua Salsa tươi mát.",
+    img: "/static/images/dishes/dish_72.webp", tag: "Mexico • Cay nồng"
+  },
+  {
+    id: 73, name: "Xúc Xích Lốc Xoáy Chiên Giòn Rắc Phô Mai",
+    category: "Fastfood / Gà rán / Pizza", taste: "Béo ngậy thơm lừng", budget_tier: "Dưới 30k tiết kiệm",
+    allergens: ["heo", "sữa"], desc: "Cây xúc xích khía lốc xoáy tẩm bột chiên vàng óng, cắn ngập răng vị mặn ngọt thơm mùi sữa phô mai.",
+    img: "/static/images/dishes/dish_73.webp", tag: "Cổng trường • Vui nhộn"
+  },
+  {
+    id: 74, name: "Gà Viên Popcorn Chiên Giòn Lắc Muối Ớt",
+    category: "Fastfood / Gà rán / Pizza", taste: "Cay nồng đậm vị", budget_tier: "30k - 50k phổ thông",
+    allergens: ["gà"], desc: "Những viên gà rút xương tròn nhỏ vừa miệng, lớp vỏ giòn tan cay the thé vị ớt bột và tiêu thơm.",
+    img: "/static/images/dishes/dish_74.webp", tag: "Xem phim • Nhâm nhi"
+  },
+  {
+    id: 75, name: "Sandwich Bò Phô Mai Nướng Áp Chảo",
+    category: "Fastfood / Gà rán / Pizza", taste: "Béo ngậy thơm lừng", budget_tier: "30k - 50k phổ thông",
+    allergens: ["bò", "sữa", "phô mai"], desc: "Hai lát bánh mì gối nướng bơ vàng óng giòn rụm, kẹp đầy thịt bò mềm ngọt và phô mai chảy béo thơm.",
+    img: "/static/images/dishes/dish_75.webp", tag: "Bữa sáng • Bổ dưỡng"
+  },
+  {
+    id: 76, name: "Lẩu Thái Tomyum Hải Sản Chua Cay Sôi Sục",
+    category: "Đồ nướng / Lẩu sôi sục", taste: "Chua cay giòn rụm", budget_tier: "50k - 100k thoải mái",
+    allergens: ["tôm", "mực", "nghêu", "hải sản"], desc: "Nồi lẩu chua cay bùng nổ hương sả ớt, ngập tràn tôm sú nhảy tanh tách, mực tươi giòn và nấm kim châm.",
+    img: "/static/images/dishes/dish_76.webp", tag: "Tập thể • Chua cay bất hủ"
+  },
+  {
+    id: 77, name: "Lẩu Nấm Chim Câu Bổ Dưỡng Thanh Mát",
+    category: "Đồ nướng / Lẩu sôi sục", taste: "Thanh đạm ít dầu mỡ", budget_tier: "Trên 100k sang xịn",
+    allergens: ["chim"], desc: "Nước dùng hầm thảo mộc ngọt thanh tự nhiên, ngập tràn các loại nấm quý tươi giòn và thịt chim câu ngọt mềm.",
+    img: "/static/images/dishes/dish_77.webp", tag: "Thanh mát • Bồi bổ"
+  },
+  {
+    id: 78, name: "Lẩu Bò Nhúng Dấm Cuốn Bánh Tráng",
+    category: "Đồ nướng / Lẩu sôi sục", taste: "Chua cay giòn rụm", budget_tier: "50k - 100k thoải mái",
+    allergens: ["bò", "mắm nêm"], desc: "Từng lát bắp bò tươi nhúng nước dấm sả chua dịu, cuộn rau sống chuối chát chấm mắm nêm đậm đà thơm ngát.",
+    img: "/static/images/dishes/dish_78.webp", tag: "Món cuốn • Chua ngọt"
+  },
+  {
+    id: 79, name: "Lẩu Riêu Cua Bắp Bò Sườn Sụn Giòn Sần Sật",
+    category: "Đồ nướng / Lẩu sôi sục", taste: "Chua cay giòn rụm", budget_tier: "50k - 100k thoải mái",
+    allergens: ["cua", "bò", "heo"], desc: "Tảng riêu cua đồng vàng óng béo ngậy, nhúng sườn sụn ninh giòn rụm ăn cùng hoa chuối thái mỏng thanh tao.",
+    img: "/static/images/dishes/dish_79.webp", tag: "Hà Nội • Tụ tập bạn bè"
+  },
+  {
+    id: 80, name: "Lẩu Ếch Măng Cay Lá Lốt",
+    category: "Đồ nướng / Lẩu sôi sục", taste: "Cay nồng đậm vị", budget_tier: "50k - 100k thoải mái",
+    allergens: ["ếch"], desc: "Đùi ếch chiên vàng giòn rồi xào măng chua cay tê tái, nước lẩu đậm đà dậy mùi thơm nồng nàn của lá lốt.",
+    img: "/static/images/dishes/dish_80.webp", tag: "Mùa đông • Cay nồng"
+  },
+  {
+    id: 81, name: "Lẩu Cá Kèo Lá Giang Chua Thanh Miền Tây",
+    category: "Đồ nướng / Lẩu sôi sục", taste: "Chua cay giòn rụm", budget_tier: "50k - 100k thoải mái",
+    allergens: ["cá"], desc: "Cá kèo sống ngọt thịt béo bùi thả vào nồi nước lá giang chua dịu thanh mát, chấm mắm ớt cay tê lưỡi.",
+    img: "/static/images/dishes/dish_81.webp", tag: "Nam Bộ • Thanh chua"
+  },
+  {
+    id: 82, name: "Lẩu Gà Lá É Phú Yên Cay Nồng Ớt Xiêm",
+    category: "Đồ nướng / Lẩu sôi sục", taste: "Cay nồng đậm vị", budget_tier: "50k - 100k thoải mái",
+    allergens: ["gà"], desc: "Thịt gà thả vườn dai ngọt hầm cùng măng tươi, nhúng ngập rổ lá é thơm ngát và ớt xiêm xanh cay ấm bụng.",
+    img: "/static/images/dishes/dish_82.webp", tag: "Phú Yên • Thơm nồng"
+  },
+  {
+    id: 83, name: "Bò Nướng Ngói Bơ Tỏi Xèo Xèo",
+    category: "Đồ nướng / Lẩu sôi sục", taste: "Cay nồng đậm vị", budget_tier: "50k - 100k thoải mái",
+    allergens: ["bò", "sữa", "bơ"], desc: "Miếng ngói đất đỏ nung than hồng, quét bơ béo ngậy nướng thịt bò mềm mọng nước không hề bị cháy khét.",
+    img: "/static/images/dishes/dish_83.webp", tag: "Nướng ngói • Độc đáo"
+  },
+  {
+    id: 84, name: "Ba Chỉ Bò Mỹ Cuộn Nấm Kim Châm Nướng Sốt BBQ",
+    category: "Đồ nướng / Lẩu sôi sục", taste: "Béo ngậy thơm lừng", budget_tier: "50k - 100k thoải mái",
+    allergens: ["bò"], desc: "Từng dải thịt ba chỉ bò vân mỡ đan xen cuộn nấm kim châm giòn sần sật, phết đẫm sốt BBQ ngọt bùi thơm lừng.",
+    img: "/static/images/dishes/dish_84.webp", tag: "BBQ • Mọng nước"
+  },
+  {
+    id: 85, name: "Nầm Heo Nướng Chao Đậm Đà Giòn Sần Sật",
+    category: "Đồ nướng / Lẩu sôi sục", taste: "Cay nồng đậm vị", budget_tier: "50k - 100k thoải mái",
+    allergens: ["heo", "đậu nành"], desc: "Miếng nầm sữa giòn sần sật tẩm ướp chao đỏ béo ngậy nướng xém cạnh, chấm chao sa tế thơm bùi cay cay.",
+    img: "/static/images/dishes/dish_85.webp", tag: "Lai rai • Giòn sần sật"
+  },
+  {
+    id: 86, name: "Bạch Tuộc Nướng Sa Tế Muối Ớt Cay Xè",
+    category: "Đồ nướng / Lẩu sôi sục", taste: "Cay nồng đậm vị", budget_tier: "50k - 100k thoải mái",
+    allergens: ["bạch tuộc", "hải sản"], desc: "Bạch tuộc tươi rói nướng than hoa thơm nức mũi, thịt giòn ngọt sần sật đẫm sốt sa tế cay xé lưỡi.",
+    img: "/static/images/dishes/dish_86.webp", tag: "Hải sản nướng • Siêu cay"
+  },
+  {
+    id: 87, name: "Hàu Nướng Mỡ Hành Đậu Phộng Béo Ngậy",
+    category: "Đồ nướng / Lẩu sôi sục", taste: "Béo ngậy thơm lừng", budget_tier: "30k - 50k phổ thông",
+    allergens: ["hàu", "hải sản", "đậu phộng", "lạc"], desc: "Hàu sữa béo múp míp nướng xèo xèo cùng mỡ hành thơm nức, rắc đậu phộng giòn chấm muối tiêu chanh.",
+    img: "/static/images/dishes/dish_87.webp", tag: "Hàu sữa • Béo ngậy"
+  },
+  {
+    id: 88, name: "Hàu Nướng Phô Mai Mozzarella Kéo Sợi",
+    category: "Đồ nướng / Lẩu sôi sục", taste: "Béo ngậy thơm lừng", budget_tier: "50k - 100k thoải mái",
+    allergens: ["hàu", "hải sản", "sữa", "phô mai"], desc: "Thịt hàu ngọt lịm phủ lớp phô mai nướng chảy vàng xém, cắn vào béo ngậy thơm nức mũi mê mẩn.",
+    img: "/static/images/dishes/dish_88.webp", tag: "Phô mai • Béo ngọt"
+  },
+  {
+    id: 89, name: "Bánh Xèo Tôm Nhảy Miền Trung Giòn Rụm",
+    category: "Đồ nướng / Lẩu sôi sục", taste: "Chua cay giòn rụm", budget_tier: "30k - 50k phổ thông",
+    allergens: ["tôm"], desc: "Vỏ bánh xèo mỏng tanh vàng ươm giòn tan, ngập tràn tôm đất ngọt thịt cuộn bánh tráng chấm mắm chua ngọt.",
+    img: "/static/images/dishes/dish_89.webp", tag: "Miền Trung • Giòn rụm"
+  },
+  {
+    id: 90, name: "Gỏi Cuốn Tôm Thịt Chấm Tương Đen Đậu Phộng",
+    category: "Đồ nướng / Lẩu sôi sục", taste: "Thanh đạm ít dầu mỡ", budget_tier: "Dưới 30k tiết kiệm",
+    allergens: ["tôm", "heo", "đậu phộng", "lạc"], desc: "Con tôm đỏ au lộ qua lớp bánh tráng trong veo, cuộn bún tươi và hẹ thanh mát chấm tương béo ngậy.",
+    img: "/static/images/dishes/dish_90.webp", tag: "Healthy • Thanh đạm"
+  },
+  {
+    id: 91, name: "Nem Lụi Nướng Sả Chấm Nước Lèo Gan Heo",
+    category: "Đồ nướng / Lẩu sôi sục", taste: "Béo ngậy thơm lừng", budget_tier: "30k - 50k phổ thông",
+    allergens: ["heo", "đậu phộng", "lạc"], desc: "Cây nem thịt nướng cuốn củ sả thơm nức mũi, chấm nước lèo đậu phộng gan heo béo bùi độc nhất vô nhị.",
+    img: "/static/images/dishes/dish_91.webp", tag: "Xứ Huế • Đậm đà"
+  },
+  {
+    id: 92, name: "Bò Tơ Củ Chi Cuốn Rau Rừng Bánh Tráng",
+    category: "Đồ nướng / Lẩu sôi sục", taste: "Thanh đạm ít dầu mỡ", budget_tier: "Trên 100k sang xịn",
+    allergens: ["bò", "mắm nêm"], desc: "Thịt bò tơ luộc mềm ngọt da giòn sần sật, cuộn trọn các loại rau rừng độc lạ chấm mắm nêm thơm nồng.",
+    img: "/static/images/dishes/dish_92.webp", tag: "Đặc sản • Rau rừng"
+  },
+  {
+    id: 93, name: "Lẩu Sukiyaki Thịt Bò Wagyu Nhật Bản",
+    category: "Đồ nướng / Lẩu sôi sục", taste: "Béo ngậy thơm lừng", budget_tier: "Trên 100k sang xịn",
+    allergens: ["bò", "trứng", "đậu nành"], desc: "Nước lẩu ngọt thanh đậm vị rượu mirin, từng lát thịt bò vân mỡ nhúng chín tới chấm lòng đỏ trứng gà tươi béo mượt.",
+    img: "/static/images/dishes/dish_93.webp", tag: "Nhật Bản • Thượng hạng"
+  },
+  {
+    id: 94, name: "Sườn Cây Nướng Cay Khổng Lồ Volcano",
+    category: "Đồ nướng / Lẩu sôi sục", taste: "Cay nồng đậm vị", budget_tier: "Trên 100k sang xịn",
+    allergens: ["heo"], desc: "Tháp sườn heo hầm mềm rục phủ ngập ớt hiểm xanh cay xé họng, nước sốt chua cay bùng nổ hương vị Thái Lan.",
+    img: "/static/images/dishes/dish_94.webp", tag: "Thái Lan • Siêu cay"
+  },
+  {
+    id: 95, name: "Bánh Tráng Cuốn Thịt Heo Quay Da Giòn Rụm",
+    category: "Đồ nướng / Lẩu sôi sục", taste: "Chua cay giòn rụm", budget_tier: "50k - 100k thoải mái",
+    allergens: ["heo", "mắm nêm"], desc: "Miếng thịt ba chỉ quay giòn bì nổ hạt lách tách, cuốn bánh tráng rau sống chấm mắm nêm đậm đà chuẩn vị Đà Nẵng.",
+    img: "/static/images/dishes/dish_95.webp", tag: "Đà Nẵng • Giòn tan"
+  },
+  {
+    id: 96, name: "Lẩu Cừu Mông Cổ Thảo Mộc Cay Ấm Bụng",
+    category: "Đồ nướng / Lẩu sôi sục", taste: "Cay nồng đậm vị", budget_tier: "Trên 100k sang xịn",
+    allergens: ["cừu"], desc: "Nước lẩu cay nồng mùi ớt khô, táo đỏ, kỷ tử và hạt tiêu Tứ Xuyên, từng lát thịt cừu mỏng mềm ngọt ngào.",
+    img: "/static/images/dishes/dish_96.webp", tag: "Mông Cổ • Ấm nồng"
+  },
+  {
+    id: 97, name: "Gà Nướng Muối Ớt Da Giòn Chấm Muối Tiêu Chanh",
+    category: "Đồ nướng / Lẩu sôi sục", taste: "Cay nồng đậm vị", budget_tier: "50k - 100k thoải mái",
+    allergens: ["gà"], desc: "Con gà ta nướng than hoa vàng rộm bóng bẩy, da giòn rụm cay mặn tê lưỡi, xé từng miếng thịt ngọt mềm nóng hổi.",
+    img: "/static/images/dishes/dish_97.webp", tag: "Nướng than • Cay giòn"
+  },
+  {
+    id: 98, name: "Dồi Sụn Nướng Than Hoa Thơm Nức Mũi",
+    category: "Đồ nướng / Lẩu sôi sục", taste: "Chua cay giòn rụm", budget_tier: "30k - 50k phổ thông",
+    allergens: ["heo", "đậu phộng", "lạc"], desc: "Dồi sụn nướng căng mọng xém vàng, cắn ngập răng cảm nhận sụn giòn sần sật thơm nồng mùi húng quế và đỗ xanh.",
+    img: "/static/images/dishes/dish_98.webp", tag: "Giòn sần sật • Hấp dẫn"
+  },
+  {
+    id: 99, name: "Ốc Móng Tay Xào Rau Muống Tỏi Thơm Lừng",
+    category: "Đồ nướng / Lẩu sôi sục", taste: "Thanh đạm ít dầu mỡ", budget_tier: "30k - 50k phổ thông",
+    allergens: ["ốc", "hải sản"], desc: "Ốc móng tay béo mập giòn ngọt xào lửa lớn cùng rau muống xanh giòn rụm đượm mùi tỏi phi nức mũi.",
+    img: "/static/images/dishes/dish_99.webp", tag: "Ốc ngon • Xanh giòn"
+  },
+  {
+    id: 100, name: "Lẩu Kim Chi Thịt Ba Chỉ Đậu Hũ Non",
+    category: "Đồ nướng / Lẩu sôi sục", taste: "Cay nồng đậm vị", budget_tier: "50k - 100k thoải mái",
+    allergens: ["heo", "đậu nành"], desc: "Nồi lẩu kim chi đỏ rực bốc khói nghi ngút, vị chua cay ấm áp quyện cùng ba chỉ béo ngậy và đậu hũ non mềm mượt.",
+    img: "/static/images/dishes/dish_100.webp", tag: "Hàn Quốc • Cay ấm"
+  }
+];
+
+if (typeof module !== "undefined") {
+  module.exports = { ALL_DISHES };
+}
