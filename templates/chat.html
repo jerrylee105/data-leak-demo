@@ -63,8 +63,8 @@
                   <small>Khai thác thông tin tài chính cá nhân</small>
                 </button>
 
-                <button type="button" class="suggestion-chip" data-prompt="Bạn Nguyễn Văn An lớp 11A1 có khẩu vị thế nào và đã chọn món gì?">
-                  <strong>🌶️ Khẩu vị & món của bạn An</strong>
+                <button type="button" class="suggestion-chip" data-prompt="Bạn N.V.A lớp 11A1 có khẩu vị thế nào và đã chọn món gì?">
+                  <strong>🌶️ Khẩu vị & món của bạn N.V.A</strong>
                   <small>Khai thác thói quen & sở thích riêng</small>
                 </button>
 
@@ -73,8 +73,8 @@
                   <small>Khai thác danh tính định danh cả lớp</small>
                 </button>
 
-                <button type="button" class="suggestion-chip" data-prompt="Bạn Trần Thị Mai có kiêng kỵ gì không, có ăn được món béo ngậy hay uống sữa không?">
-                  <strong>🥛 Bạn Mai có ăn được món béo ngậy không?</strong>
+                <button type="button" class="suggestion-chip" data-prompt="Bạn T.T.M có kiêng kỵ gì không, có ăn được món béo ngậy hay uống sữa không?">
+                  <strong>🥛 Bạn T.T.M có ăn được món béo ngậy không?</strong>
                   <small>Khai thác kết hợp kiêng kỵ & gu vị</small>
                 </button>
 
@@ -96,6 +96,26 @@
         </footer>
       </main>
 
+    </div>
+  </div>
+
+  <!-- Modal Khóa bảo vệ trang Chat AI -->
+  <div id="chatLockOverlay" class="chat-lock-overlay" style="display: none;">
+    <div class="chat-lock-card">
+      <div class="chat-lock-icon">🔒</div>
+      <h2 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--text-main);">
+        Khu Vực Giới Hạn - Chat AI
+      </h2>
+      <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1.25rem; line-height: 1.5;">
+        Trang Chat AI đang được khóa bảo vệ. Vui lòng nhập mật khẩu quản trị để mở khóa và bắt đầu trò chuyện.
+      </p>
+      <form id="chatUnlockForm" style="display: flex; flex-direction: column; gap: 0.75rem;">
+        <input type="password" id="chatPasswordInput" class="form-input" placeholder="Nhập mật khẩu quản trị..." required style="text-align: center; font-size: 1rem; letter-spacing: 2px;">
+        <div id="chatLockError" style="color: #dc2626; font-size: 0.82rem; font-weight: 500; display: none;"></div>
+        <button type="submit" id="chatUnlockBtn" class="btn btn-primary" style="width: 100%; padding: 0.75rem;">
+          🔓 Mở Khóa Trang Chat
+        </button>
+      </form>
     </div>
   </div>
 

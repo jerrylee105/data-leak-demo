@@ -8,6 +8,72 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let chatHistory = [];
 
+  const chatLockOverlay = document.getElementById('chatLockOverlay');
+  const chatUnlockForm = document.getElementById('chatUnlockForm');
+  const chatPasswordInput = document.getElementById('chatPasswordInput');
+  const chatLockError = document.getElementById('chatLockError');
+
+  // Kiểm tra trạng thái khóa bảo mật của trang chat
+  async function checkChatAuth() {
+    try {
+      const res = await fetch('/api/chat-auth-status');
+      const data = await res.json();
+      if (!data.authenticated) {
+        showLockScreen();
+      } else {
+        hideLockScreen();
+      }
+    } catch (e) {
+      showLockScreen();
+    }
+  }
+
+  function showLockScreen(errMsg = '') {
+    if (chatLockOverlay) {
+      chatLockOverlay.style.display = 'flex';
+      if (errMsg && chatLockError) {
+        chatLockError.innerText = errMsg;
+        chatLockError.style.display = 'block';
+      }
+      setTimeout(() => chatPasswordInput && chatPasswordInput.focus(), 100);
+    }
+  }
+
+  function hideLockScreen() {
+    if (chatLockOverlay) {
+      chatLockOverlay.style.display = 'none';
+      if (chatLockError) chatLockError.style.display = 'none';
+      setTimeout(() => userInput && userInput.focus(), 100);
+    }
+  }
+
+  if (chatUnlockForm) {
+    chatUnlockForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const pwd = chatPasswordInput.value.trim();
+      if (!pwd) return;
+
+      try {
+        const res = await fetch('/api/verify-chat-password', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ password: pwd })
+        });
+        const result = await res.json();
+        if (result.success) {
+          hideLockScreen();
+          chatPasswordInput.value = '';
+        } else {
+          showLockScreen(result.error || 'Mật khẩu quản trị không chính xác!');
+        }
+      } catch (err) {
+        showLockScreen('Lỗi kết nối máy chủ. Vui lòng thử lại!');
+      }
+    });
+  }
+
+  checkChatAuth();
+
   // Kiểm tra trạng thái AI Engine
   async function checkStatus() {
     if (!aiModelText) return;
@@ -89,6 +155,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const data = await res.json();
       loadingDiv.remove();
+
+      if (res.status === 401 || res.status === 403) {
+        showLockScreen(data.error || 'Vui lòng nhập mật khẩu quản trị để sử dụng!');
+        return;
+      }
 
       if (data.success) {
         appendMessage('bot', data.reply);
